@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell, ChevronDown, Menu, BarChart3, Globe, Zap, Lightbulb, MessageSquare, Settings, Database } from 'lucide-react';
+import { Bell, ChevronDown, Menu, BarChart3, Globe, Zap, Lightbulb, MessageSquare, Settings, Database, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -56,6 +56,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           >
             <Database className="mr-2 h-4 w-4" />
             Dataset Library
+          </Button>
+          <Button 
+            variant="ghost" 
+            className={`w-full justify-start text-gray-700 ${isActive('/analysis') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/analysis')}
+          >
+            <BarChart className="mr-2 h-4 w-4" />
+            Economic Analysis
           </Button>
           <Button 
             variant="ghost" 

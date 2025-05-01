@@ -11,6 +11,7 @@ import Scenarios from "./pages/Scenarios";
 import Signals from "./pages/Signals";
 import IndustryInsights from "./pages/IndustryInsights";
 import Recommendations from "./pages/Recommendations";
+import Analysis from "./pages/Analysis";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/signals" element={<Signals />} />
           <Route path="/insights" element={<IndustryInsights />} />
           <Route path="/recommendations" element={<Recommendations />} />
+          <Route path="/analysis" element={<Analysis />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Bell, ChevronDown, Menu, BarChart3, Globe, Zap, Lightbulb, MessageSquare, Settings } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Bell, ChevronDown, Menu, BarChart3, Globe, Zap, Lightbulb, MessageSquare, Settings, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -18,6 +18,9 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -32,35 +35,48 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <nav className="flex-1 p-4 space-y-1">
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+            className={`w-full justify-start text-gray-700 ${isActive('/') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/')}
           >
             <BarChart3 className="mr-2 h-4 w-4" />
             Dashboard
           </Button>
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+            className={`w-full justify-start text-gray-700 ${isActive('/signals') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/signals')}
           >
             <Zap className="mr-2 h-4 w-4" />
             Signals
           </Button>
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+            className={`w-full justify-start text-gray-700 ${isActive('/datasets') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/datasets')}
+          >
+            <Database className="mr-2 h-4 w-4" />
+            Dataset Library
+          </Button>
+          <Button 
+            variant="ghost" 
+            className={`w-full justify-start text-gray-700 ${isActive('/insights') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/insights')}
           >
             <Globe className="mr-2 h-4 w-4" />
             Industry Insights
           </Button>
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+            className={`w-full justify-start text-gray-700 ${isActive('/scenarios') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/scenarios')}
           >
             <Lightbulb className="mr-2 h-4 w-4" />
             Scenarios
           </Button>
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+            className={`w-full justify-start text-gray-700 ${isActive('/recommendations') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/recommendations')}
           >
             <MessageSquare className="mr-2 h-4 w-4" />
             Recommendations
@@ -69,7 +85,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="p-4 border-t border-border">
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+            className={`w-full justify-start text-gray-700 ${isActive('/settings') ? 'bg-gray-100 text-primary' : 'hover:bg-gray-100 hover:text-primary'} font-medium`}
+            onClick={() => navigate('/settings')}
           >
             <Settings className="mr-2 h-4 w-4" />
             Settings

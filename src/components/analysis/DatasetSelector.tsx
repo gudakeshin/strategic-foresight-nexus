@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dataset } from '@/types/datasets';
 import { Database } from 'lucide-react';
@@ -9,13 +9,34 @@ interface DatasetSelectorProps {
   datasets: Dataset[];
   selectedDataset: number | null;
   onSelectDataset: (id: number) => void;
+  preselectedDataset?: Dataset | null;
 }
 
-const DatasetSelector = ({ datasets, selectedDataset, onSelectDataset }: DatasetSelectorProps) => {
+const DatasetSelector = ({ 
+  datasets, 
+  selectedDataset, 
+  onSelectDataset,
+  preselectedDataset
+}: DatasetSelectorProps) => {
+  
+  // Set the preselected dataset if available
+  useEffect(() => {
+    if (preselectedDataset && preselectedDataset.id && !selectedDataset) {
+      onSelectDataset(preselectedDataset.id);
+    }
+  }, [preselectedDataset, selectedDataset, onSelectDataset]);
+
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Select Dataset</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg">Selected Dataset</CardTitle>
+          {preselectedDataset && (
+            <Badge variant="outline" className="text-xs">
+              From Library
+            </Badge>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="max-h-[300px] overflow-y-auto">
         <div className="space-y-3">
@@ -35,7 +56,7 @@ const DatasetSelector = ({ datasets, selectedDataset, onSelectDataset }: Dataset
               </div>
               <div className="flex flex-wrap gap-1 mt-2">
                 <Badge variant="outline" className="text-xs">
-                  {dataset.rows} rows
+                  {dataset.rows.toLocaleString()} rows
                 </Badge>
                 <Badge variant="outline" className="text-xs">
                   {dataset.columns} columns

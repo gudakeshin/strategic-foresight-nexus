@@ -13,6 +13,7 @@ import Signals from "./pages/Signals";
 import IndustryInsights from "./pages/IndustryInsights";
 import Recommendations from "./pages/Recommendations";
 import Analysis from "./pages/Analysis";
+import { DatasetProvider } from "./context/DatasetContext";
 
 const queryClient = new QueryClient();
 
@@ -20,23 +21,25 @@ const App = () => {
   return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <TooltipProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/datasets" element={<DatasetLibrary />} />
-              <Route path="/scenarios" element={<Scenarios />} />
-              <Route path="/signals" element={<Signals />} />
-              <Route path="/insights" element={<IndustryInsights />} />
-              <Route path="/recommendations" element={<Recommendations />} />
-              <Route path="/analysis" element={<Analysis />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
-        </BrowserRouter>
+        <DatasetProvider>
+          <BrowserRouter>
+            <TooltipProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/datasets" element={<DatasetLibrary />} />
+                <Route path="/scenarios" element={<Scenarios />} />
+                <Route path="/signals" element={<Signals />} />
+                <Route path="/insights" element={<IndustryInsights />} />
+                <Route path="/recommendations" element={<Recommendations />} />
+                <Route path="/analysis" element={<Analysis />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </BrowserRouter>
+        </DatasetProvider>
       </QueryClientProvider>
     </React.StrictMode>
   );

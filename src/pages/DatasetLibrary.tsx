@@ -1,20 +1,44 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { datasets, algorithms } from '@/data/datasetsData';
 import DatasetsList from '@/components/datasets/DatasetsList';
 import AlgorithmSelector from '@/components/datasets/AlgorithmSelector';
 import ActionsPanel from '@/components/datasets/ActionsPanel';
 import SearchFilters from '@/components/datasets/SearchFilters';
+import { useDataset } from '@/context/DatasetContext';
+import { toast } from '@/components/ui/use-toast';
 
 const DatasetLibrary = () => {
-  const [selectedDataset, setSelectedDataset] = useState<number | null>(null);
+  const navigate = useNavigate();
+  const { selectedDataset: globalSelectedDataset, setSelectedDataset: setGlobalSelectedDataset } = useDataset();
+  const [selectedDatasetId, setSelectedDatasetId] = useState<number | null>(
+    globalSelectedDataset?.id || null
+  );
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   
   const filteredDatasets = datasets.filter(dataset => 
     dataset.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleSelectDataset = (id: number) => {
+    setSelectedDatasetId(id);
+    const dataset = datasets.find(d => d.id === id) || null;
+    setGlobalSelectedDataset(dataset);
+    
+    toast({
+      title: "Dataset Selected",
+      description: `${dataset?.name} has been selected for analysis.`,
+    });
+  };
+
+  const handleGoToAnalysis = () => {
+    if (selectedDatasetId) {
+      navigate('/analysis');
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -31,8 +55,8 @@ const DatasetLibrary = () => {
           <div className="lg:col-span-2 space-y-4">
             <DatasetsList 
               datasets={filteredDatasets} 
-              selectedDataset={selectedDataset}
-              onSelectDataset={setSelectedDataset}
+              selectedDataset={selectedDatasetId}
+              onSelectDataset={handleSelectDataset}
             />
           </div>
 
@@ -41,12 +65,13 @@ const DatasetLibrary = () => {
               algorithms={algorithms}
               selectedAlgorithm={selectedAlgorithm}
               onSelectAlgorithm={setSelectedAlgorithm}
-              disabled={!selectedDataset}
+              disabled={!selectedDatasetId}
             />
 
             <ActionsPanel 
-              selectedDataset={selectedDataset}
+              selectedDataset={selectedDatasetId}
               selectedAlgorithm={selectedAlgorithm}
+              onAnalyze={handleGoToAnalysis}
             />
           </div>
         </div>

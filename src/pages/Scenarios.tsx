@@ -4,7 +4,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, ListChecks, GitBranch, Timeline, ArrowRight } from 'lucide-react';
+import { PlusCircle, ListChecks, GitBranch, Clock, ArrowRight } from 'lucide-react';
 import ScenarioComparisonCard from '@/components/ScenarioComparisonCard';
 
 interface ScenarioCard {
@@ -159,7 +159,7 @@ const ScenariosPage: React.FC = () => {
                     </div>
                   </Button>
                   <Button variant="outline" className="w-full justify-start text-left">
-                    <Timeline className="mr-2 h-4 w-4" />
+                    <Clock className="mr-2 h-4 w-4" />
                     <div className="flex flex-col items-start">
                       <span>Time Horizon Analysis</span>
                       <span className="text-xs text-muted-foreground">View impacts across different timeframes</span>

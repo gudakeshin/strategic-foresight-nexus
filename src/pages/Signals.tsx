@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SignalFeed from '@/components/SignalFeed';
 import { Zap, Filter, BarChart, TrendingUp, TrendingDown } from 'lucide-react';
+import { Signal } from '@/lib/mock-data';
+
+// For the `SignalFeed` component, we need to populate it with signals data
+// Assuming the mock data is imported from @/lib/mock-data
+// If not available, we'll handle that in the component
 
 const SignalsPage: React.FC = () => {
   return (
@@ -40,7 +45,7 @@ const SignalsPage: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <SignalFeed limit={5} />
+                <SignalFeed limit={5} signals={[]} />
                 <Button variant="link" className="mt-2 p-0 h-auto">
                   View all signals
                 </Button>
@@ -116,7 +121,7 @@ const SignalsPage: React.FC = () => {
                 </Tabs>
               </CardHeader>
               <CardContent>
-                <SignalFeed limit={10} />
+                <SignalFeed limit={10} signals={[]} />
               </CardContent>
             </Card>
           </div>

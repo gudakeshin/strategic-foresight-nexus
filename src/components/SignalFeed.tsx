@@ -6,10 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { ExternalLink } from 'lucide-react';
 
 interface SignalFeedProps {
-  signals: Signal[];
+  signals?: Signal[];
+  limit?: number;
 }
 
-const SignalFeed: React.FC<SignalFeedProps> = ({ signals }) => {
+const SignalFeed: React.FC<SignalFeedProps> = ({ signals = [], limit }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -32,9 +33,12 @@ const SignalFeed: React.FC<SignalFeedProps> = ({ signals }) => {
     }
   };
 
+  // Apply the limit if provided
+  const displayedSignals = limit ? signals.slice(0, limit) : signals;
+
   return (
     <div className="space-y-4 overflow-auto max-h-[600px] pr-1">
-      {signals.map((signal) => (
+      {displayedSignals.map((signal) => (
         <Card
           key={signal.id}
           className="border border-gray-200 shadow-sm bg-white transition-all duration-200 hover:shadow-md"

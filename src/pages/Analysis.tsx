@@ -1,14 +1,17 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { BarChart3, Brain, Database, LineChart, SlidersHorizontal } from 'lucide-react';
+import { BarChart3, Brain, Database, LineChart, SlidersHorizontal, Upload } from 'lucide-react';
 import { Algorithm } from '@/types/datasets';
 import DatasetSelector from '@/components/analysis/DatasetSelector';
 import CompanyInputs from '@/components/analysis/CompanyInputs';
 import AlgorithmConfigPanel from '@/components/analysis/AlgorithmConfigPanel';
 import ForecastResults from '@/components/analysis/ForecastResults';
 import InsightPanel from '@/components/analysis/InsightPanel';
+import { Button } from '@/components/ui/button';
+import { datasets, algorithms } from '@/data/datasetsData';
 
 const Analysis = () => {
   const [selectedDataset, setSelectedDataset] = useState<number | null>(null);
@@ -102,7 +105,7 @@ const Analysis = () => {
                     Run Forecast Model
                   </Button>
                   <Button variant="outline" className="w-full">
-                    <FileUp className="mr-2 h-4 w-4" />
+                    <Upload className="mr-2 h-4 w-4" />
                     Upload Custom Data
                   </Button>
                 </div>

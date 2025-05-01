@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Database, FileSpreadsheet, SearchIcon, SliderHorizontal } from 'lucide-react';
+import { Database, FileSpreadsheet, Search, SlidersHorizontal } from 'lucide-react';
 
 // Mock datasets
 const datasets = [
@@ -88,10 +87,10 @@ const DatasetLibrary = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
             </div>
             <Button variant="outline" size="sm">
-              <SliderHorizontal className="h-4 w-4 mr-2" />
+              <SlidersHorizontal className="h-4 w-4 mr-2" />
               Filter
             </Button>
           </div>

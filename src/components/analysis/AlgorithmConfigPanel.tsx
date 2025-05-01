@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Algorithm } from '@/types/datasets';
-import { SliderHorizontal } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
 
 interface AlgorithmConfigPanelProps {
   algorithms: Algorithm[];

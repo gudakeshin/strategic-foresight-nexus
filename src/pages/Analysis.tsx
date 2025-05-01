@@ -1,16 +1,9 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ChartContainer, ChartTooltip } from '@/components/ui/chart';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip, AreaChart, Area } from 'recharts';
-import { Database, BarChart, SliderHorizontal, FileUp, ExternalLink } from 'lucide-react';
-import { datasets, algorithms } from '@/data/datasetsData';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { BarChart3, Brain, Database, LineChart, SlidersHorizontal } from 'lucide-react';
+import { Algorithm } from '@/types/datasets';
 import DatasetSelector from '@/components/analysis/DatasetSelector';
 import CompanyInputs from '@/components/analysis/CompanyInputs';
 import AlgorithmConfigPanel from '@/components/analysis/AlgorithmConfigPanel';
@@ -105,7 +98,7 @@ const Analysis = () => {
                     disabled={!selectedDataset || !selectedAlgorithm || !company || !industry}
                     onClick={handleRunModel}
                   >
-                    <BarChart className="mr-2 h-4 w-4" />
+                    <BarChart3 className="mr-2 h-4 w-4" />
                     Run Forecast Model
                   </Button>
                   <Button variant="outline" className="w-full">
@@ -136,7 +129,7 @@ const Analysis = () => {
               <Card className="h-[600px] flex items-center justify-center">
                 <CardContent className="text-center">
                   <div className="mb-4">
-                    <BarChart className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-medium mb-2">Configure your analysis parameters</h3>
                   <p className="text-muted-foreground max-w-md mx-auto">

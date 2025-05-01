@@ -1,6 +1,5 @@
-
 import React, { ReactNode } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Bell, ChevronDown, Menu, BarChart3, Globe, Zap, Lightbulb, MessageSquare, Settings, Database, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {

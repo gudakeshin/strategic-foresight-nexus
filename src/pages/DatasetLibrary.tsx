@@ -8,7 +8,7 @@ import AlgorithmSelector from '@/components/datasets/AlgorithmSelector';
 import ActionsPanel from '@/components/datasets/ActionsPanel';
 import SearchFilters from '@/components/datasets/SearchFilters';
 import { useDataset } from '@/context/DatasetContext';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const DatasetLibrary = () => {
   const navigate = useNavigate();
@@ -28,8 +28,7 @@ const DatasetLibrary = () => {
     const dataset = datasets.find(d => d.id === id) || null;
     setGlobalSelectedDataset(dataset);
     
-    toast({
-      title: "Dataset Selected",
+    toast.success("Dataset Selected", {
       description: `${dataset?.name} has been selected for analysis.`,
     });
   };

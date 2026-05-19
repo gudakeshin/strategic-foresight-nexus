@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -13,6 +12,7 @@ import Signals from "./pages/Signals";
 import IndustryInsights from "./pages/IndustryInsights";
 import Recommendations from "./pages/Recommendations";
 import Analysis from "./pages/Analysis";
+import Settings from "./pages/Settings";
 import { DatasetProvider } from "./context/DatasetContext";
 
 const queryClient = new QueryClient();
@@ -32,11 +32,11 @@ const App = () => {
                 <Route path="/insights" element={<IndustryInsights />} />
                 <Route path="/recommendations" element={<Recommendations />} />
                 <Route path="/analysis" element={<Analysis />} />
+                <Route path="/settings" element={<Settings />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Toaster />
-              <Sonner />
             </TooltipProvider>
           </BrowserRouter>
         </DatasetProvider>

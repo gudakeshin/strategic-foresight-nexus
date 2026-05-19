@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { BarChart3, Brain, Database, SlidersHorizontal, Upload, ArrowLeft } from 'lucide-react';
 import DatasetSelector from '@/components/analysis/DatasetSelector';
@@ -15,56 +15,57 @@ import { datasets, algorithms } from '@/data/datasetsData';
 import { useDataset } from '@/context/DatasetContext';
 import { toast } from 'sonner';
 
-const Analysis = () => {
-  const { selectedDataset: globalSelectedDataset } = useDataset();
-  const [selectedDataset, setSelectedDataset] = useState<number | null>(globalSelectedDataset?.id || null);
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>("");
-  const [forecastHorizon, setForecastHorizon] = useState<number>(12);
-  const [granularity, setGranularity] = useState<string>("monthly");
-  const [company, setCompany] = useState<string>("");
-  const [industry, setIndustry] = useState<string>("");
-  const [isModelRun, setIsModelRun] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("config");
+const forecastData = [
+  { month: 'Jan', actual: 4000, forecast: 4200, lower: 3800, upper: 4600 },
+  { month: 'Feb', actual: 4200, forecast: 4300, lower: 3900, upper: 4700 },
+  { month: 'Mar', actual: 4100, forecast: 4400, lower: 4000, upper: 4800 },
+  { month: 'Apr', actual: 4400, forecast: 4600, lower: 4200, upper: 5000 },
+  { month: 'May', actual: 4700, forecast: 4800, lower: 4400, upper: 5200 },
+  { month: 'Jun', actual: 5000, forecast: 5100, lower: 4700, upper: 5500 },
+  { month: 'Jul', forecast: 5300, lower: 4900, upper: 5700 },
+  { month: 'Aug', forecast: 5500, lower: 5100, upper: 5900 },
+  { month: 'Sep', forecast: 5400, lower: 5000, upper: 5800 },
+  { month: 'Oct', forecast: 5600, lower: 5200, upper: 6000 },
+  { month: 'Nov', forecast: 5800, lower: 5400, upper: 6200 },
+  { month: 'Dec', forecast: 6000, lower: 5600, upper: 6400 },
+];
 
-  // Check if user came directly to analysis page without selecting a dataset
+const featureImportanceData = [
+  { feature: 'Interest Rate', importance: 0.32 },
+  { feature: 'Inflation', importance: 0.28 },
+  { feature: 'GDP Growth', importance: 0.18 },
+  { feature: 'Unemployment', importance: 0.12 },
+  { feature: 'Consumer Confidence', importance: 0.10 },
+];
+
+const Analysis = () => {
+  const { selectedDataset, setSelectedDataset } = useDataset();
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>('');
+  const [forecastHorizon, setForecastHorizon] = useState<number>(12);
+  const [granularity, setGranularity] = useState<string>('monthly');
+  const [company, setCompany] = useState<string>('');
+  const [industry, setIndustry] = useState<string>('');
+  const [isModelRun, setIsModelRun] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>('config');
+
   useEffect(() => {
-    if (!globalSelectedDataset && !selectedDataset) {
-      toast.error("No Dataset Selected", {
-        description: "Please select a dataset from the library first.",
+    if (!selectedDataset) {
+      toast.error('No Dataset Selected', {
+        description: 'Please select a dataset from the library first.',
       });
     }
-  }, [globalSelectedDataset, selectedDataset]);
+  }, []);
 
-  // Mock forecast data
-  const forecastData = [
-    { month: 'Jan', actual: 4000, forecast: 4200, lower: 3800, upper: 4600 },
-    { month: 'Feb', actual: 4200, forecast: 4300, lower: 3900, upper: 4700 },
-    { month: 'Mar', actual: 4100, forecast: 4400, lower: 4000, upper: 4800 },
-    { month: 'Apr', actual: 4400, forecast: 4600, lower: 4200, upper: 5000 },
-    { month: 'May', actual: 4700, forecast: 4800, lower: 4400, upper: 5200 },
-    { month: 'Jun', actual: 5000, forecast: 5100, lower: 4700, upper: 5500 },
-    { month: 'Jul', forecast: 5300, lower: 4900, upper: 5700 },
-    { month: 'Aug', forecast: 5500, lower: 5100, upper: 5900 },
-    { month: 'Sep', forecast: 5400, lower: 5000, upper: 5800 },
-    { month: 'Oct', forecast: 5600, lower: 5200, upper: 6000 },
-    { month: 'Nov', forecast: 5800, lower: 5400, upper: 6200 },
-    { month: 'Dec', forecast: 6000, lower: 5600, upper: 6400 },
-  ];
-  
-  // Mock feature importance data
-  const featureImportanceData = [
-    { feature: 'Interest Rate', importance: 0.32 },
-    { feature: 'Inflation', importance: 0.28 },
-    { feature: 'GDP Growth', importance: 0.18 },
-    { feature: 'Unemployment', importance: 0.12 },
-    { feature: 'Consumer Confidence', importance: 0.10 },
-  ];
+  const handleSelectDataset = (id: number) => {
+    const dataset = datasets.find(d => d.id === id) ?? null;
+    setSelectedDataset(dataset);
+  };
 
   const handleRunModel = () => {
     setIsModelRun(true);
-    setActiveTab("results");
-    toast.success("Model Running", {
-      description: "Your forecast model is now generating results.",
+    setActiveTab('results');
+    toast.success('Model Running', {
+      description: 'Your forecast model is now generating results.',
     });
   };
 
@@ -107,13 +108,12 @@ const Analysis = () => {
 
           <TabsContent value="config" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Panel - Inputs */}
               <div className="lg:col-span-1 space-y-6">
-                <DatasetSelector 
-                  selectedDataset={selectedDataset}
-                  onSelectDataset={setSelectedDataset}
+                <DatasetSelector
+                  selectedDataset={selectedDataset?.id ?? null}
+                  onSelectDataset={handleSelectDataset}
                   datasets={datasets}
-                  preselectedDataset={globalSelectedDataset}
+                  preselectedDataset={selectedDataset}
                 />
 
                 <CompanyInputs
@@ -139,8 +139,8 @@ const Analysis = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <Button 
-                        className="w-full" 
+                      <Button
+                        className="w-full"
                         disabled={!selectedDataset || !selectedAlgorithm || !company || !industry}
                         onClick={handleRunModel}
                       >
@@ -156,16 +156,14 @@ const Analysis = () => {
                 </Card>
               </div>
 
-              {/* Right Panel - Preview & Info */}
               <div className="lg:col-span-2">
                 <Card className="h-full">
                   <CardHeader>
                     <CardTitle>Dataset Preview</CardTitle>
                     <CardDescription>
-                      {selectedDataset ? 
-                        `Viewing ${datasets.find(d => d.id === selectedDataset)?.name}` : 
-                        "Select a dataset to preview its contents"
-                      }
+                      {selectedDataset
+                        ? `Viewing ${selectedDataset.name}`
+                        : 'Select a dataset to preview its contents'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="h-[500px] overflow-y-auto">
@@ -176,48 +174,45 @@ const Analysis = () => {
                           <div className="grid grid-cols-2 gap-2 text-sm">
                             <div>
                               <p className="text-muted-foreground">Rows:</p>
-                              <p className="font-medium">{datasets.find(d => d.id === selectedDataset)?.rows}</p>
+                              <p className="font-medium">{selectedDataset.rows}</p>
                             </div>
                             <div>
                               <p className="text-muted-foreground">Columns:</p>
-                              <p className="font-medium">{datasets.find(d => d.id === selectedDataset)?.columns}</p>
+                              <p className="font-medium">{selectedDataset.columns}</p>
                             </div>
                             <div>
                               <p className="text-muted-foreground">Last Updated:</p>
-                              <p className="font-medium">{datasets.find(d => d.id === selectedDataset)?.lastUpdated}</p>
+                              <p className="font-medium">{selectedDataset.lastUpdated}</p>
                             </div>
                           </div>
                         </div>
-                        
+
                         <div>
                           <h3 className="font-medium mb-2">Sample Data Points</h3>
                           <div className="border rounded-md overflow-x-auto">
-                            {(() => {
-                              const ds = datasets.find(d => d.id === selectedDataset);
-                              if (!ds) return null;
-                              return (
-                                <table className="min-w-full divide-y divide-border">
-                                  <thead>
-                                    <tr className="bg-muted/50">
-                                      {ds.previewColumns.map(col => (
-                                        <th key={col} className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                          {col}
-                                        </th>
-                                      ))}
-                                    </tr>
-                                  </thead>
-                                  <tbody className="bg-white divide-y divide-gray-200">
-                                    {ds.previewRows.map((row, i) => (
-                                      <tr key={i}>
-                                        {row.map((cell, j) => (
-                                          <td key={j} className="px-4 py-2 whitespace-nowrap text-sm">{cell}</td>
-                                        ))}
-                                      </tr>
+                            <table className="min-w-full divide-y divide-border">
+                              <thead>
+                                <tr className="bg-muted/50">
+                                  {selectedDataset.previewColumns.map(col => (
+                                    <th
+                                      key={col}
+                                      className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                                    >
+                                      {col}
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-200">
+                                {selectedDataset.previewRows.map((row, i) => (
+                                  <tr key={i}>
+                                    {row.map((cell, j) => (
+                                      <td key={j} className="px-4 py-2 whitespace-nowrap text-sm">{cell}</td>
                                     ))}
-                                  </tbody>
-                                </table>
-                              );
-                            })()}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
                       </div>
@@ -240,16 +235,16 @@ const Analysis = () => {
 
           <TabsContent value="results">
             {isModelRun && (
-              <ForecastResults 
-                forecastData={forecastData} 
-                featureImportanceData={featureImportanceData} 
+              <ForecastResults
+                forecastData={forecastData}
+                featureImportanceData={featureImportanceData}
               />
             )}
           </TabsContent>
 
           <TabsContent value="insights">
             {isModelRun && (
-              <InsightPanel 
+              <InsightPanel
                 selectedAlgorithm={selectedAlgorithm}
                 company={company}
                 industry={industry}

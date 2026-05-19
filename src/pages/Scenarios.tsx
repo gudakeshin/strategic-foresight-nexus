@@ -1,63 +1,22 @@
 
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, ListChecks, GitBranch, Clock, ArrowRight } from 'lucide-react';
 import ScenarioComparisonCard from '@/components/ScenarioComparisonCard';
+import { scenariosData, type Scenario } from '@/lib/mock-data';
 
-interface ScenarioCard {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  createdAt: string;
-  updatedAt: string;
-  probability: number;
-}
-
-const scenariosData: ScenarioCard[] = [
-  {
-    id: "1",
-    title: "Global Economic Slowdown",
-    description: "Analysis of potential market impacts from global economic slowdown across key regions",
-    category: "Economic",
-    createdAt: "2025-04-02",
-    updatedAt: "2025-04-28",
-    probability: 65
-  },
-  {
-    id: "2",
-    title: "Supply Chain Disruption",
-    description: "Evaluation of supply chain resilience under various disruption scenarios",
-    category: "Operations",
-    createdAt: "2025-03-15",
-    updatedAt: "2025-04-20",
-    probability: 48
-  },
-  {
-    id: "3",
-    title: "Regulatory Changes Impact",
-    description: "Assessment of upcoming regulatory changes and their potential business impact",
-    category: "Regulatory",
-    createdAt: "2025-04-10",
-    updatedAt: "2025-04-25",
-    probability: 82
-  },
-  {
-    id: "4",
-    title: "Technological Disruption",
-    description: "Analysis of emerging technologies and their disruptive potential on industry",
-    category: "Technology",
-    createdAt: "2025-03-28",
-    updatedAt: "2025-04-15",
-    probability: 70
-  }
-];
+const categories = ['all', 'economic', 'operations', 'regulatory', 'technology'];
 
 const ScenariosPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('all');
+  const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
+
+  const filtered = scenariosData.filter(
+    s => activeTab === 'all' || s.category.toLowerCase() === activeTab
+  );
 
   return (
     <DashboardLayout>
@@ -81,63 +40,71 @@ const ScenariosPage: React.FC = () => {
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-center">
                   <CardTitle>Scenario Explorer</CardTitle>
-                  <Button variant="outline" size="sm">
-                    View All
-                  </Button>
                 </div>
-                <CardDescription>
-                  Browse and manage strategic scenarios
-                </CardDescription>
+                <CardDescription>Browse and manage strategic scenarios</CardDescription>
                 <Tabs defaultValue="all" className="mt-4" onValueChange={setActiveTab}>
-                  <TabsList className="grid grid-cols-4 mb-2">
-                    <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="economic">Economic</TabsTrigger>
-                    <TabsTrigger value="regulatory">Regulatory</TabsTrigger>
-                    <TabsTrigger value="technology">Technology</TabsTrigger>
+                  <TabsList className="grid grid-cols-5 mb-2">
+                    {categories.map(c => (
+                      <TabsTrigger key={c} value={c}>
+                        {c.charAt(0).toUpperCase() + c.slice(1)}
+                      </TabsTrigger>
+                    ))}
                   </TabsList>
                 </Tabs>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {scenariosData
-                    .filter(scenario => activeTab === 'all' || scenario.category.toLowerCase() === activeTab)
-                    .map(scenario => (
-                      <Card key={scenario.id} className="bg-muted/40 hover:bg-muted transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex justify-between">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-medium">{scenario.title}</h3>
-                                <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">
-                                  {scenario.category}
-                                </span>
-                              </div>
-                              <p className="text-sm text-muted-foreground">{scenario.description}</p>
+                  {filtered.map(scenario => (
+                    <Card
+                      key={scenario.id}
+                      className={`transition-colors ${
+                        selectedScenario?.id === scenario.id
+                          ? 'bg-primary/5 border-primary'
+                          : 'bg-muted/40 hover:bg-muted'
+                      }`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex justify-between">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-medium">{scenario.title}</h3>
+                              <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">
+                                {scenario.category}
+                              </span>
                             </div>
-                            <Button variant="ghost" size="icon">
-                              <ArrowRight className="h-4 w-4" />
-                            </Button>
+                            <p className="text-sm text-muted-foreground">{scenario.description}</p>
                           </div>
-                          <div className="flex items-center gap-6 mt-2">
-                            <div className="text-xs text-muted-foreground">
-                              Last updated: {scenario.updatedAt}
-                            </div>
-                            <div className="text-xs flex items-center gap-1">
-                              <span>Probability:</span>
-                              <span className="font-medium">{scenario.probability}%</span>
-                            </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setSelectedScenario(scenario)}
+                            aria-label={`View ${scenario.title} forecast`}
+                          >
+                            <ArrowRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div className="flex items-center gap-6 mt-2">
+                          <div className="text-xs text-muted-foreground">
+                            Last updated: {scenario.updatedAt}
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          <div className="text-xs flex items-center gap-1">
+                            <span>Probability:</span>
+                            <span className="font-medium">{scenario.probability}%</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="space-y-6">
-            <ScenarioComparisonCard />
-            
+            <ScenarioComparisonCard
+              activeScenarioId={selectedScenario?.forecastScenarioId}
+            />
+
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-medium">Scenario Tools</CardTitle>

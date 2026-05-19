@@ -5,6 +5,8 @@ export interface Dataset {
   rows: number;
   columns: number;
   lastUpdated: string;
+  previewColumns: string[];
+  previewRows: (string | number)[][];
 }
 
 export interface Algorithm {

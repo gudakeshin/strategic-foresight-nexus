@@ -64,9 +64,13 @@ const SignalFeed: React.FC<SignalFeedProps> = ({ signals = [], limit }) => {
                     <span className="font-medium">Source:</span> {signal.source}
                   </p>
                 </div>
-                <a href="#" className="inline-flex items-center text-primary text-xs font-medium">
+                <button
+                  type="button"
+                  className="inline-flex items-center text-primary text-xs font-medium hover:underline"
+                  onClick={() => {}}
+                >
                   View Details <ExternalLink className="ml-1 h-3 w-3" />
-                </a>
+                </button>
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 <span className="font-medium">Affected Industries:</span> {signal.industries.join(', ')}

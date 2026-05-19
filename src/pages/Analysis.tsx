@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { BarChart3, Brain, Database, LineChart, SlidersHorizontal, Upload, ArrowLeft } from 'lucide-react';
-import { Algorithm } from '@/types/datasets';
+import { BarChart3, Brain, Database, SlidersHorizontal, Upload, ArrowLeft } from 'lucide-react';
 import DatasetSelector from '@/components/analysis/DatasetSelector';
 import CompanyInputs from '@/components/analysis/CompanyInputs';
 import AlgorithmConfigPanel from '@/components/analysis/AlgorithmConfigPanel';
@@ -14,10 +13,9 @@ import InsightPanel from '@/components/analysis/InsightPanel';
 import { Button } from '@/components/ui/button';
 import { datasets, algorithms } from '@/data/datasetsData';
 import { useDataset } from '@/context/DatasetContext';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const Analysis = () => {
-  const navigate = useNavigate();
   const { selectedDataset: globalSelectedDataset } = useDataset();
   const [selectedDataset, setSelectedDataset] = useState<number | null>(globalSelectedDataset?.id || null);
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>("");
@@ -31,10 +29,8 @@ const Analysis = () => {
   // Check if user came directly to analysis page without selecting a dataset
   useEffect(() => {
     if (!globalSelectedDataset && !selectedDataset) {
-      toast({
-        title: "No Dataset Selected",
+      toast.error("No Dataset Selected", {
         description: "Please select a dataset from the library first.",
-        variant: "destructive",
       });
     }
   }, [globalSelectedDataset, selectedDataset]);
@@ -67,8 +63,7 @@ const Analysis = () => {
   const handleRunModel = () => {
     setIsModelRun(true);
     setActiveTab("results");
-    toast({
-      title: "Model Running",
+    toast.success("Model Running", {
       description: "Your forecast model is now generating results.",
     });
   };
@@ -79,15 +74,13 @@ const Analysis = () => {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/datasets')}
-                className="flex items-center gap-1 text-muted-foreground hover:text-primary"
+              <Link
+                to="/datasets"
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Datasets
-              </Button>
+              </Link>
             </div>
             <h1 className="text-3xl font-semibold">Economic Analysis & Forecasting</h1>
             <p className="text-muted-foreground">
@@ -199,28 +192,32 @@ const Analysis = () => {
                         <div>
                           <h3 className="font-medium mb-2">Sample Data Points</h3>
                           <div className="border rounded-md overflow-x-auto">
-                            <table className="min-w-full divide-y divide-border">
-                              <thead>
-                                <tr className="bg-muted/50">
-                                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
-                                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">GDP Growth</th>
-                                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Inflation</th>
-                                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Unemployment</th>
-                                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Interest Rate</th>
-                                </tr>
-                              </thead>
-                              <tbody className="bg-white divide-y divide-gray-200">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                  <tr key={i}>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm">2023-{i < 10 ? `0${i}` : i}-01</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm">{(Math.random() * 5 - 0.5).toFixed(2)}%</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm">{(Math.random() * 8 + 1).toFixed(2)}%</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm">{(Math.random() * 10 + 3).toFixed(2)}%</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm">{(Math.random() * 7 + 2).toFixed(2)}%</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                            {(() => {
+                              const ds = datasets.find(d => d.id === selectedDataset);
+                              if (!ds) return null;
+                              return (
+                                <table className="min-w-full divide-y divide-border">
+                                  <thead>
+                                    <tr className="bg-muted/50">
+                                      {ds.previewColumns.map(col => (
+                                        <th key={col} className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                          {col}
+                                        </th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody className="bg-white divide-y divide-gray-200">
+                                    {ds.previewRows.map((row, i) => (
+                                      <tr key={i}>
+                                        {row.map((cell, j) => (
+                                          <td key={j} className="px-4 py-2 whitespace-nowrap text-sm">{cell}</td>
+                                        ))}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              );
+                            })()}
                           </div>
                         </div>
                       </div>

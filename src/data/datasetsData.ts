@@ -1,51 +1,132 @@
-
 import { Dataset, Algorithm } from '@/types/datasets';
 
-// Mock datasets
 export const datasets: Dataset[] = [
-  { id: 1, name: 'Global Economic Indicators', rows: 5842, columns: 27, lastUpdated: '2023-11-15' },
-  { id: 2, name: 'Industry Performance Metrics', rows: 3921, columns: 15, lastUpdated: '2023-12-01' },
-  { id: 3, name: 'Consumer Sentiment Index', rows: 2145, columns: 12, lastUpdated: '2024-01-10' },
-  { id: 4, name: 'Supply Chain Disruptions', rows: 1503, columns: 18, lastUpdated: '2024-02-20' },
-  { id: 5, name: 'Market Volatility Indicators', rows: 4218, columns: 22, lastUpdated: '2024-03-05' },
-  { id: 6, name: 'Regulatory Change Impact', rows: 987, columns: 14, lastUpdated: '2024-03-28' }
+  {
+    id: 1,
+    name: 'Global Economic Indicators',
+    rows: 5842,
+    columns: 27,
+    lastUpdated: '2023-11-15',
+    previewColumns: ['Date', 'GDP Growth', 'Inflation', 'Unemployment', 'Interest Rate'],
+    previewRows: [
+      ['2023-01-01', '2.41%', '6.21%', '5.83%', '4.25%'],
+      ['2023-02-01', '2.87%', '5.98%', '5.71%', '4.50%'],
+      ['2023-03-01', '3.12%', '5.62%', '5.60%', '4.75%'],
+      ['2023-04-01', '3.05%', '5.43%', '5.48%', '5.00%'],
+      ['2023-05-01', '2.98%', '5.21%', '5.35%', '5.00%'],
+    ],
+  },
+  {
+    id: 2,
+    name: 'Industry Performance Metrics',
+    rows: 3921,
+    columns: 15,
+    lastUpdated: '2023-12-01',
+    previewColumns: ['Date', 'Sector', 'Revenue Growth', 'Margin', 'Headcount Change'],
+    previewRows: [
+      ['2023-01-01', 'Technology', '14.2%', '22.1%', '+3.4%'],
+      ['2023-01-01', 'Healthcare', '6.8%', '18.5%', '+1.2%'],
+      ['2023-01-01', 'Finance', '9.1%', '31.2%', '-0.5%'],
+      ['2023-01-01', 'Manufacturing', '3.2%', '12.8%', '-1.8%'],
+      ['2023-01-01', 'Energy', '11.5%', '19.3%', '+0.9%'],
+    ],
+  },
+  {
+    id: 3,
+    name: 'Consumer Sentiment Index',
+    rows: 2145,
+    columns: 12,
+    lastUpdated: '2024-01-10',
+    previewColumns: ['Date', 'Overall Index', 'Current Conditions', 'Future Expectations', 'Buying Climate'],
+    previewRows: [
+      ['2023-01-01', '98.4', '104.2', '94.3', '88.7'],
+      ['2023-02-01', '101.2', '106.8', '97.1', '91.4'],
+      ['2023-03-01', '99.7', '105.1', '95.8', '90.2'],
+      ['2023-04-01', '103.5', '109.4', '99.2', '93.6'],
+      ['2023-05-01', '105.8', '111.2', '101.9', '95.1'],
+    ],
+  },
+  {
+    id: 4,
+    name: 'Supply Chain Disruptions',
+    rows: 1503,
+    columns: 18,
+    lastUpdated: '2024-02-20',
+    previewColumns: ['Date', 'Region', 'Disruption Type', 'Severity (1-10)', 'Lead Time Impact'],
+    previewRows: [
+      ['2023-01-01', 'Asia-Pacific', 'Port Congestion', '7', '+14 days'],
+      ['2023-01-15', 'Europe', 'Weather Event', '5', '+5 days'],
+      ['2023-02-01', 'North America', 'Labor Strike', '8', '+21 days'],
+      ['2023-02-20', 'Asia-Pacific', 'Component Shortage', '9', '+32 days'],
+      ['2023-03-05', 'Latin America', 'Regulatory Hold', '4', '+7 days'],
+    ],
+  },
+  {
+    id: 5,
+    name: 'Market Volatility Indicators',
+    rows: 4218,
+    columns: 22,
+    lastUpdated: '2024-03-05',
+    previewColumns: ['Date', 'VIX', 'Equity Vol', 'FX Vol', 'Bond Vol'],
+    previewRows: [
+      ['2023-01-01', '18.4', '14.2%', '8.1%', '5.3%'],
+      ['2023-02-01', '21.7', '16.8%', '9.4%', '6.1%'],
+      ['2023-03-01', '24.3', '19.1%', '11.2%', '7.8%'],
+      ['2023-04-01', '19.8', '15.4%', '8.7%', '5.9%'],
+      ['2023-05-01', '17.2', '13.6%', '7.8%', '5.1%'],
+    ],
+  },
+  {
+    id: 6,
+    name: 'Regulatory Change Impact',
+    rows: 987,
+    columns: 14,
+    lastUpdated: '2024-03-28',
+    previewColumns: ['Date', 'Regulation', 'Affected Sector', 'Compliance Cost', 'Effective Date'],
+    previewRows: [
+      ['2023-01-01', 'ESG Disclosure', 'Finance', '$2.4M', '2024-01-01'],
+      ['2023-02-01', 'Data Privacy', 'Technology', '$1.8M', '2023-07-01'],
+      ['2023-03-01', 'Carbon Tax', 'Energy', '$5.1M', '2024-04-01'],
+      ['2023-04-01', 'AI Governance', 'Technology', '$0.9M', '2024-06-01'],
+      ['2023-05-01', 'Supply Chain Due Diligence', 'Manufacturing', '$3.2M', '2025-01-01'],
+    ],
+  },
 ];
 
-// Algorithms with their details
 export const algorithms: Algorithm[] = [
-  { 
-    id: 1, 
-    name: 'ARIMA / SARIMA', 
-    bestFor: 'Time series with trend & seasonality', 
+  {
+    id: 1,
+    name: 'ARIMA / SARIMA',
+    bestFor: 'Time series with trend & seasonality',
     keyStrengths: 'Interpretable, strong for univariate forecasts with stationary or seasonal patterns',
-    rank: 1
+    rank: 1,
   },
-  { 
-    id: 2, 
-    name: 'Prophet (by Facebook)', 
-    bestFor: 'Business forecasting with seasonality and holidays', 
+  {
+    id: 2,
+    name: 'Prophet (by Facebook)',
+    bestFor: 'Business forecasting with seasonality and holidays',
     keyStrengths: 'Easy to use, handles missing data & seasonality automatically, great for business applications',
-    rank: 2
+    rank: 2,
   },
   {
     id: 3,
     name: 'XGBoost / LightGBM',
     bestFor: 'Structured/tabular data forecasting',
     keyStrengths: 'High accuracy, handles non-linearities, strong with feature engineering',
-    rank: 3
+    rank: 3,
   },
   {
     id: 4,
     name: 'LSTM (Long Short-Term Memory)',
     bestFor: 'Complex time series with long-term dependencies',
     keyStrengths: 'Learns complex temporal relationships, strong in deep learning models',
-    rank: 4
+    rank: 4,
   },
   {
     id: 5,
     name: 'Random Forest Regressor',
     bestFor: 'Non-linear forecasting for tabular datasets',
     keyStrengths: 'Robust to overfitting, works well with fewer tuning needs and non-linear data',
-    rank: 5
-  }
+    rank: 5,
+  },
 ];

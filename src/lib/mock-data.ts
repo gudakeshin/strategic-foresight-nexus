@@ -131,7 +131,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "up",
     categories: ["macroeconomic", "primary"],
     unit: "%",
-    data: generateTimeSeriesData(12, 2.5, 3.5, 0.3)
+    data: generateTimeSeriesData(12, 2.5, 3.5, 0.3, 101)
   },
   {
     id: "inflation",
@@ -141,7 +141,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "down",
     categories: ["macroeconomic", "primary"],
     unit: "%",
-    data: generateTimeSeriesData(12, 2.5, 3.5, 0.2)
+    data: generateTimeSeriesData(12, 2.5, 3.5, 0.2, 102)
   },
   {
     id: "unemployment",
@@ -151,7 +151,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "down",
     categories: ["labor", "primary"],
     unit: "%",
-    data: generateTimeSeriesData(12, 3.8, 4.5, 0.2)
+    data: generateTimeSeriesData(12, 3.8, 4.5, 0.2, 103)
   },
   {
     id: "consumer_confidence",
@@ -161,7 +161,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "up",
     categories: ["sentiment", "primary"],
     unit: "points",
-    data: generateTimeSeriesData(12, 95, 110, 3)
+    data: generateTimeSeriesData(12, 95, 110, 3, 104)
   },
   {
     id: "interest_rate",
@@ -171,7 +171,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "down",
     categories: ["financial", "primary"],
     unit: "%",
-    data: generateTimeSeriesData(12, 4.5, 5.5, 0.25)
+    data: generateTimeSeriesData(12, 4.5, 5.5, 0.25, 105)
   },
   {
     id: "housing_starts",
@@ -181,7 +181,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "up",
     categories: ["housing", "secondary"],
     unit: "thousands",
-    data: generateTimeSeriesData(12, 1350, 1500, 50)
+    data: generateTimeSeriesData(12, 1350, 1500, 50, 106)
   },
   {
     id: "manufacturing_pmi",
@@ -191,7 +191,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "up",
     categories: ["manufacturing", "secondary"],
     unit: "points",
-    data: generateTimeSeriesData(12, 48, 54, 1.5)
+    data: generateTimeSeriesData(12, 48, 54, 1.5, 107)
   },
   {
     id: "retail_sales",
@@ -201,7 +201,7 @@ export const economicIndicators: EconomicIndicator[] = [
     trendDirection: "up",
     categories: ["consumer", "secondary"],
     unit: "%",
-    data: generateTimeSeriesData(12, 2, 4, 0.5)
+    data: generateTimeSeriesData(12, 2, 4, 0.5, 108)
   }
 ];
 
@@ -280,15 +280,15 @@ export const forecastScenarios: ForecastScenario[] = [
     indicators: [
       {
         indicator_id: "gdp_growth",
-        forecast_values: generateForecastData(8, 3.2, 3.5, 0.2)
+        forecast_values: generateForecastData(8, 3.2, 3.5, 0.2, 201)
       },
       {
         indicator_id: "inflation",
-        forecast_values: generateForecastData(8, 2.9, 2.7, 0.2)
+        forecast_values: generateForecastData(8, 2.9, 2.7, 0.2, 202)
       },
       {
         indicator_id: "unemployment",
-        forecast_values: generateForecastData(8, 4.1, 4.0, 0.1)
+        forecast_values: generateForecastData(8, 4.1, 4.0, 0.1, 203)
       }
     ]
   },
@@ -301,15 +301,15 @@ export const forecastScenarios: ForecastScenario[] = [
     indicators: [
       {
         indicator_id: "gdp_growth",
-        forecast_values: generateForecastData(8, 3.2, 4.2, 0.3)
+        forecast_values: generateForecastData(8, 3.2, 4.2, 0.3, 211)
       },
       {
         indicator_id: "inflation",
-        forecast_values: generateForecastData(8, 2.9, 2.4, 0.2)
+        forecast_values: generateForecastData(8, 2.9, 2.4, 0.2, 212)
       },
       {
         indicator_id: "unemployment",
-        forecast_values: generateForecastData(8, 4.1, 3.6, 0.2)
+        forecast_values: generateForecastData(8, 4.1, 3.6, 0.2, 213)
       }
     ]
   },
@@ -322,42 +322,55 @@ export const forecastScenarios: ForecastScenario[] = [
     indicators: [
       {
         indicator_id: "gdp_growth",
-        forecast_values: generateForecastData(8, 3.2, 1.8, 0.4)
+        forecast_values: generateForecastData(8, 3.2, 1.8, 0.4, 221)
       },
       {
         indicator_id: "inflation",
-        forecast_values: generateForecastData(8, 2.9, 4.1, 0.3)
+        forecast_values: generateForecastData(8, 2.9, 4.1, 0.3, 222)
       },
       {
         indicator_id: "unemployment",
-        forecast_values: generateForecastData(8, 4.1, 5.2, 0.3)
+        forecast_values: generateForecastData(8, 4.1, 5.2, 0.3, 223)
       }
     ]
   }
 ];
 
-// Helper functions to generate time series and forecast data
+// Deterministic pseudo-random number generator (mulberry32).
+// Using a fixed seed ensures chart data is identical across page refreshes.
+function makePrng(seed: number) {
+  let s = seed;
+  return () => {
+    s |= 0; s = s + 0x6d2b79f5 | 0;
+    let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
 function generateTimeSeriesData(
-  months: number, 
-  minValue: number, 
-  maxValue: number, 
-  volatility: number
+  months: number,
+  minValue: number,
+  maxValue: number,
+  volatility: number,
+  seed = 42
 ): { date: string; value: number }[] {
+  const rand = makePrng(seed);
   const data = [];
-  let currentValue = minValue + Math.random() * (maxValue - minValue);
+  let currentValue = minValue + rand() * (maxValue - minValue);
   const today = new Date();
-  
+
   for (let i = months - 1; i >= 0; i--) {
     const date = new Date(today);
     date.setMonth(today.getMonth() - i);
-    const change = (Math.random() - 0.5) * volatility;
+    const change = (rand() - 0.5) * volatility;
     currentValue = Math.max(minValue, Math.min(maxValue, currentValue + change));
     data.push({
       date: date.toISOString().slice(0, 10),
-      value: parseFloat(currentValue.toFixed(2))
+      value: parseFloat(currentValue.toFixed(2)),
     });
   }
-  
+
   return data;
 }
 
@@ -365,24 +378,26 @@ function generateForecastData(
   months: number,
   startValue: number,
   targetValue: number,
-  volatility: number
+  volatility: number,
+  seed = 99
 ): { date: string; value: number }[] {
+  const rand = makePrng(seed);
   const data = [];
   let currentValue = startValue;
   const today = new Date();
   const step = (targetValue - startValue) / months;
-  
+
   for (let i = 0; i < months; i++) {
     const date = new Date(today);
     date.setMonth(today.getMonth() + i + 1);
-    const change = step + (Math.random() - 0.5) * volatility;
+    const change = step + (rand() - 0.5) * volatility;
     currentValue = currentValue + change;
     data.push({
       date: date.toISOString().slice(0, 10),
-      value: parseFloat(currentValue.toFixed(2))
+      value: parseFloat(currentValue.toFixed(2)),
     });
   }
-  
+
   return data;
 }
 

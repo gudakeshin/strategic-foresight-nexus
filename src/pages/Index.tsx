@@ -8,7 +8,7 @@ import ScenarioComparisonCard from '@/components/ScenarioComparisonCard';
 import { economicIndicators, industryOutlooks, recentSignals } from '@/lib/mock-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, ArrowUpRight, BarChart, LineChart, Globe, Lightbulb } from 'lucide-react';
+import { BarChart3, ArrowUpRight, ArrowDownRight, BarChart, LineChart, Globe, Lightbulb } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Index = () => {
@@ -54,7 +54,7 @@ const Index = () => {
                         : 'text-gray-600'
                     }`}>
                       {indicator.trendDirection === 'up' && <ArrowUpRight className="h-3 w-3 mr-0.5" />}
-                      {indicator.trendDirection === 'down' && <ArrowUpRight className="h-3 w-3 mr-0.5 rotate-90" />}
+                      {indicator.trendDirection === 'down' && <ArrowDownRight className="h-3 w-3 mr-0.5" />}
                       {Math.abs(indicator.value - indicator.previousValue).toFixed(1)}{indicator.unit}
                     </span>
                   </div>

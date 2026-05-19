@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { MessageSquare, Flag, Target, CheckCircle } from 'lucide-react';
 import RecommendationCard, { type Recommendation } from '@/components/RecommendationCard';
+import { toast } from 'sonner';
 
-const recommendationsData: Recommendation[] = [
+const initialRecommendations: Recommendation[] = [
   {
     id: '1',
     title: 'Diversify Supply Chain Networks',
@@ -95,98 +113,200 @@ const tabs: TabConfig[] = [
   { value: 'implemented', label: 'Implemented', filter: r => r.status === 'implemented' },
 ];
 
-const RecommendationsPage: React.FC = () => (
-  <DashboardLayout>
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-semibold">Strategic Recommendations</h1>
-          <p className="text-muted-foreground">Actionable insights to drive strategic decision making</p>
+const RecommendationsPage: React.FC = () => {
+  const [recommendations, setRecommendations] = useState<Recommendation[]>(initialRecommendations);
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
+  const [requestTopic, setRequestTopic] = useState('');
+  const [requestDescription, setRequestDescription] = useState('');
+  const [requestPriority, setRequestPriority] = useState<'high' | 'medium' | 'low'>('medium');
+  const [requestType, setRequestType] = useState<'AI' | 'Expert' | 'Data Analysis'>('AI');
+
+  const handleSubmitRequest = () => {
+    if (!requestTopic.trim()) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const newRec: Recommendation = {
+      id: String(Date.now()),
+      title: requestTopic,
+      description: requestDescription || 'Requested recommendation pending analysis.',
+      category: 'Strategic',
+      priority: requestPriority,
+      impact: 50,
+      effort: 50,
+      status: 'pending',
+      createdAt: today,
+      source: requestType,
+    };
+
+    setRecommendations(prev => [newRec, ...prev]);
+    setShowRequestDialog(false);
+    setRequestTopic('');
+    setRequestDescription('');
+    setRequestPriority('medium');
+    setRequestType('AI');
+    toast.success('Recommendation requested successfully');
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-semibold">Strategic Recommendations</h1>
+            <p className="text-muted-foreground">Actionable insights to drive strategic decision making</p>
+          </div>
+          <Button className="flex gap-2" onClick={() => setShowRequestDialog(true)}>
+            <MessageSquare className="h-4 w-4" />
+            Request Recommendation
+          </Button>
         </div>
-        <Button className="flex gap-2">
-          <MessageSquare className="h-4 w-4" />
-          Request Recommendation
-        </Button>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <MessageSquare className="h-5 w-5 text-primary" />
+                Total
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{recommendations.length}</p>
+              <p className="text-sm text-muted-foreground">Active recommendations</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Flag className="h-5 w-5 text-red-500" />
+                High Priority
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{recommendations.filter(r => r.priority === 'high').length}</p>
+              <p className="text-sm text-muted-foreground">Require immediate attention</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Target className="h-5 w-5 text-amber-500" />
+                In Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{recommendations.filter(r => r.status === 'in-progress').length}</p>
+              <p className="text-sm text-muted-foreground">Currently being implemented</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <CheckCircle className="h-5 w-5 text-green-500" />
+                Implemented
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{recommendations.filter(r => r.status === 'implemented').length}</p>
+              <p className="text-sm text-muted-foreground">Successfully completed</p>
+            </CardContent>
+          </Card>
+        </div>
+
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <MessageSquare className="h-5 w-5 text-primary" />
-              Total
-            </CardTitle>
+          <CardHeader>
+            <CardTitle>Recommendations</CardTitle>
+            <CardDescription>Strategic actions based on scenarios and insights</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{recommendationsData.length}</p>
-            <p className="text-sm text-muted-foreground">Active recommendations</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Flag className="h-5 w-5 text-red-500" />
-              High Priority
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{recommendationsData.filter(r => r.priority === 'high').length}</p>
-            <p className="text-sm text-muted-foreground">Require immediate attention</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Target className="h-5 w-5 text-amber-500" />
-              In Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{recommendationsData.filter(r => r.status === 'in-progress').length}</p>
-            <p className="text-sm text-muted-foreground">Currently being implemented</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              Implemented
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{recommendationsData.filter(r => r.status === 'implemented').length}</p>
-            <p className="text-sm text-muted-foreground">Successfully completed</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Recommendations</CardTitle>
-          <CardDescription>Strategic actions based on scenarios and insights</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="all">
-            <TabsList className="mb-4">
-              {tabs.map(t => (
-                <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>
-              ))}
-            </TabsList>
-            {tabs.map(t => (
-              <TabsContent key={t.value} value={t.value} className="space-y-4">
-                {recommendationsData.filter(t.filter).map(r => (
-                  <RecommendationCard key={r.id} recommendation={r} />
+            <Tabs defaultValue="all">
+              <TabsList className="mb-4">
+                {tabs.map(t => (
+                  <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>
                 ))}
-              </TabsContent>
-            ))}
-          </Tabs>
-        </CardContent>
-      </Card>
-    </div>
-  </DashboardLayout>
-);
+              </TabsList>
+              {tabs.map(t => (
+                <TabsContent key={t.value} value={t.value} className="space-y-4">
+                  {recommendations.filter(t.filter).map(r => (
+                    <RecommendationCard key={r.id} recommendation={r} />
+                  ))}
+                </TabsContent>
+              ))}
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle>Request Recommendation</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="req-topic">Topic</Label>
+              <Input
+                id="req-topic"
+                placeholder="What topic do you need a recommendation on?"
+                value={requestTopic}
+                onChange={e => setRequestTopic(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="req-description">Description</Label>
+              <Textarea
+                id="req-description"
+                placeholder="Provide additional context or specific questions..."
+                value={requestDescription}
+                onChange={e => setRequestDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="req-priority">Priority</Label>
+                <Select
+                  value={requestPriority}
+                  onValueChange={v => setRequestPriority(v as 'high' | 'medium' | 'low')}
+                >
+                  <SelectTrigger id="req-priority">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="req-type">Type</Label>
+                <Select
+                  value={requestType}
+                  onValueChange={v => setRequestType(v as 'AI' | 'Expert' | 'Data Analysis')}
+                >
+                  <SelectTrigger id="req-type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AI">AI</SelectItem>
+                    <SelectItem value="Expert">Expert</SelectItem>
+                    <SelectItem value="Data Analysis">Data Analysis</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowRequestDialog(false)}>Cancel</Button>
+            <Button onClick={handleSubmitRequest} disabled={!requestTopic.trim()}>Submit Request</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </DashboardLayout>
+  );
+};
 
 export default RecommendationsPage;

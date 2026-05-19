@@ -1,16 +1,32 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { BarChart3, Brain, Database, SlidersHorizontal, Upload, ArrowLeft } from 'lucide-react';
+import { BarChart3, Brain, Database, SlidersHorizontal, Upload, ArrowLeft, CloudUpload } from 'lucide-react';
 import DatasetSelector from '@/components/analysis/DatasetSelector';
 import CompanyInputs from '@/components/analysis/CompanyInputs';
 import AlgorithmConfigPanel from '@/components/analysis/AlgorithmConfigPanel';
 import ForecastResults from '@/components/analysis/ForecastResults';
 import InsightPanel from '@/components/analysis/InsightPanel';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { datasets, algorithms } from '@/data/datasetsData';
 import { useDataset } from '@/context/DatasetContext';
 import { toast } from 'sonner';
@@ -48,6 +64,13 @@ const Analysis = () => {
   const [isModelRun, setIsModelRun] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('config');
 
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [uploadFormat, setUploadFormat] = useState('CSV');
+  const [uploadName, setUploadName] = useState('');
+  const [dragOver, setDragOver] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!selectedDataset) {
       toast.error('No Dataset Selected', {
@@ -70,6 +93,7 @@ const Analysis = () => {
   };
 
   return (
+    <>
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -147,7 +171,7 @@ const Analysis = () => {
                         <BarChart3 className="mr-2 h-4 w-4" />
                         Run Forecast Model
                       </Button>
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full" onClick={() => setShowUploadDialog(true)}>
                         <Upload className="mr-2 h-4 w-4" />
                         Upload Custom Data
                       </Button>
@@ -254,6 +278,92 @@ const Analysis = () => {
         </Tabs>
       </div>
     </DashboardLayout>
+
+      <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Upload Custom Data</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div
+              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/30 hover:border-primary/50'
+              }`}
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={e => {
+                e.preventDefault();
+                setDragOver(false);
+                const file = e.dataTransfer.files[0];
+                if (file) setSelectedFileName(file.name);
+              }}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (file) setSelectedFileName(file.name);
+                }}
+              />
+              <CloudUpload className="mx-auto h-10 w-10 text-muted-foreground mb-3" />
+              {selectedFileName ? (
+                <p className="text-sm font-medium text-primary">{selectedFileName}</p>
+              ) : (
+                <>
+                  <p className="text-sm font-medium">Drag & drop your file here or click to browse</p>
+                  <p className="text-xs text-muted-foreground mt-1">Supports CSV, Excel, JSON, Parquet</p>
+                </>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="upload-format">Format</Label>
+              <Select value={uploadFormat} onValueChange={setUploadFormat}>
+                <SelectTrigger id="upload-format">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="CSV">CSV</SelectItem>
+                  <SelectItem value="Excel">Excel</SelectItem>
+                  <SelectItem value="JSON">JSON</SelectItem>
+                  <SelectItem value="Parquet">Parquet</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="upload-name">Dataset Name</Label>
+              <Input
+                id="upload-name"
+                placeholder="Enter a name for this dataset"
+                value={uploadName}
+                onChange={e => setUploadName(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowUploadDialog(false)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                setShowUploadDialog(false);
+                setUploadName('');
+                setSelectedFileName('');
+                setUploadFormat('CSV');
+                toast.success('Dataset uploaded', {
+                  description: 'Your dataset is now available in the library.',
+                });
+              }}
+              disabled={!uploadName.trim()}
+            >
+              Upload
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
